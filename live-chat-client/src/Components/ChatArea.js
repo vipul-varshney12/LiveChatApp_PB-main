@@ -4,13 +4,15 @@ import { IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MessageSelf from "./MessageSelf";
 import MessageOthers from "./MessageOthers";
+import Emoji from './Emoji';
+
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import { myContext } from "./MainContainer";
 import io from "socket.io-client";
-//import  socket  from "socket.io.client";
+
 const  ENDPOINT="http://localhost:8000";
 var socket,chat
 
@@ -25,6 +27,10 @@ function ChatArea() {
   const [allMessages, setAllMessages] = useState([]);
   const[allMessagesCopy,setAllMessagesCopy]=useState([]);
   
+  
+  const handleEmojiSelect = (emoji) => {
+    setMessageContent(messageContent + emoji);
+  };
 
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
@@ -51,6 +57,7 @@ function ChatArea() {
         console.log("Message Fired");
       });
   };
+
   //coonect  to socket
   useEffect(()=>{
     socket=io(ENDPOINT);
@@ -156,33 +163,36 @@ function ChatArea() {
               })}
           </div>
           <div ref={messagesEndRef} className="BOTTOM" />
-          <div className={"text-input-area" + (lightTheme ? "" : " dark")}>
-            <input
-              placeholder="Type a Message"
-              className={"search-box" + (lightTheme ? "" : " dark")}
-              value={messageContent}
-              onChange={(e) => {
-                setMessageContent(e.target.value);
-              }}
-              onKeyDown={(event) => {
-                if (event.code == "Enter") {
-                  // console.log(event);
-                  sendMessage();
-                  setMessageContent("");
-                  setRefresh(!refresh);
-                }
-              }}
-            />
-            <IconButton
-              className={"icon" + (lightTheme ? "" : " dark")}
-              onClick={() => {
-                sendMessage();
-                setRefresh(!refresh);
-              }}
-            >
-              <SendIcon />
-            </IconButton>
-          </div>
+<div className={"text-input-area" + (lightTheme ? "" : " dark")}>
+  <input
+    placeholder="Type a Message"
+    className={"search-box" + (lightTheme ? "" : " dark")}
+    value={messageContent}
+    onChange={(e) => {
+      setMessageContent(e.target.value);
+    }}
+    onKeyDown={(event) => {
+      if (event.code === "Enter") {
+        // Automatically send message when Enter key is pressed
+        sendMessage();
+        setMessageContent('');
+        setRefresh(!refresh);
+      }
+    }}
+  />
+   <Emoji onEmojiSelect={handleEmojiSelect} />
+
+  <IconButton
+    className={"icon" + (lightTheme ? "" : " dark")}
+    onClick={() => {
+      sendMessage();
+      setRefresh(!refresh);
+    }}
+  >
+    <SendIcon />
+  </IconButton>
+
+</div>
         </div>
       );
     }
