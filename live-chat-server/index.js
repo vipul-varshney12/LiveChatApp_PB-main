@@ -1,8 +1,11 @@
-const express = require("express");
+const express = require('express');
+const multer = require('multer');
+const mongoose = require('mongoose');
+const Image = require('./modals/Image');
 const dotenv = require("dotenv");
-const mongoose = require("mongoose"); // Removed default import
-const app = express();
 const cors = require("cors");
+//  const Image = require('./modals/imageModel');
+const app = express();
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 
 // CORS Setup
@@ -17,6 +20,11 @@ dotenv.config();
 
 // Body parsing Middleware
 app.use(express.json());
+
+// Connect to MongoDB
+
+
+
 
 // Importing routes
 const userRoutes = require("./Routes/userRoutes");
@@ -76,15 +84,22 @@ io.on("connection", (socket) => {
     socket.join(room);
   });
   socket.on("new message", (newMessageStatus) => {
- var chat = newMessageStatus.chat;
+    var chat = newMessageStatus.chat;
     if (!chat.users) {
       return console.log("chat.users not defined");
     }
 
     chat.users.forEach((user) => {
       if (user._id == newMessageStatus.sender._id) return;
-      socket.in(user._id).emit(",essage  recieved",newMessageRecieved);
+      socket.in(user._id).emit("newmessage", newMessageStatus.message);
     });
   });
 });
+
+
+
+
+
+
+
 

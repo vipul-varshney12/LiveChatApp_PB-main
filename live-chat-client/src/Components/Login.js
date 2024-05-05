@@ -9,6 +9,7 @@ function Login() {
   const [showlogin, setShowLogin] = useState(false);
   const [data, setData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [logInStatus, setLogInStatus] = React.useState("");
   const [signInStatus, setSignInStatus] = React.useState("");
@@ -38,6 +39,7 @@ function Login() {
       setLogInStatus({ msg: "Success", key: Math.random() });
       setLoading(false);
       localStorage.setItem("userData", JSON.stringify(response));
+      setIsLoggedIn(true);
       navigate("/app/welcome");
     } catch (error) {
       setLogInStatus({
@@ -66,6 +68,7 @@ function Login() {
       setSignInStatus({ msg: "Success", key: Math.random() });
       navigate("/app/welcome");
       localStorage.setItem("userData", JSON.stringify(response));
+      setIsLoggedIn(true);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -98,7 +101,7 @@ function Login() {
           <img src={logo} alt="Logo" className="welcome-logo" />
         </div>
         {showlogin && (
-          <div className="login-box">
+          <div className={`login-box ${isLoggedIn ? "online" : ""}`}>
             <p className="login-text">Login to your Account</p>
             <TextField
               onChange={changeHandler}

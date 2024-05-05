@@ -82,8 +82,10 @@ const fetchAllUsersController = expressAsyncHandler(async (req, res) => {
   res.send(users);
 });
 
+
 module.exports = {
   loginController,
   registerController,
   fetchAllUsersController,
+  
 };

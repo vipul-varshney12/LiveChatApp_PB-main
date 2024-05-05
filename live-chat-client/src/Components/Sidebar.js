@@ -7,6 +7,7 @@ import NightlightIcon from "@mui/icons-material/Nightlight";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import RecentActorsIcon from '@mui/icons-material/RecentActors';
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -110,12 +111,9 @@ function Sidebar() {
       </div>
       <div className={"sb-search" + (lightTheme ? "" : " dark")}>
         <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
-          <SearchIcon />
+        <RecentActorsIcon/>
         </IconButton>
-        <input
-          placeholder="Search"
-          className={"search-box" + (lightTheme ? "" : " dark")}
-        />
+       <h3>USERS LIST</h3>
       </div>
       <div className={"sb-conversations" + (lightTheme ? "" : " dark")}>
         {conversations.map((conversation, index) => {

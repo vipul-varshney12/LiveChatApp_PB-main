@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { IconButton } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import MessageSelf from "./MessageSelf";
@@ -12,6 +13,7 @@ import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import { myContext } from "./MainContainer";
 import io from "socket.io-client";
+//import AttachFile from "@mui/icons-material/AttachFile";
 
 const  ENDPOINT="http://localhost:8000";
 var socket,chat
@@ -26,12 +28,76 @@ function ChatArea() {
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [allMessages, setAllMessages] = useState([]);
   const[allMessagesCopy,setAllMessagesCopy]=useState([]);
-  
+ //file  share
+ const [selectedFile, setSelectedFile] = useState(null);
+ const [deletedChatId, setDeletedChatId] = useState(null);
+
+
+ const handleFileInputChange = (event) => {
+  setSelectedFile(event.target.files[0]);
+};
+ 
+  // delte  functinality
+
+  const handleDeleteChat = (chatId) => {
+  setDeletedChatId(chatId);
+};
+
+useEffect(() => {
+  if (deletedChatId) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userData.data.token}`,
+      },
+    };
+
+    axios
+     .delete(`http://localhost:8000/message/${deletedChatId}`, config)
+     .then((response) => {
+        console.log("Chat deleted successfully");
+        // Update the UI to reflect the deletion of the chat
+        // For example, you can remove the chat from the chat list or display a success message
+        setDeletedChatId(null);
+      })
+     .catch((error) => {
+        console.error("Error deleting chat", error);
+      });
+  }
+}, [deletedChatId, userData.data.token]);
+ 
+
+
   
   const handleEmojiSelect = (emoji) => {
     setMessageContent(messageContent + emoji);
   };
 
+  const sendFileMessage = () => {
+    if (!selectedFile) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    formData.append("chatId", chat_id);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userData.data.token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    axios
+    .post("http://localhost:8000/message/", formData, config)
+    .then((response) => {
+      setMessageContent("");
+      setSelectedFile(null);
+      setRefresh(!refresh);
+      console.log("File message sent");
+    })
+    .catch((error) => {
+      console.error("Error sending file message", error);
+    });
+  };
+  
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
    const[socketConnectionsStatus,setSocketConnoectionsStatus]=useState([]);
@@ -142,7 +208,12 @@ function ChatArea() {
             </p>
             
             </div>
-            <IconButton className={"icon" + (lightTheme ? "" : " dark")}>
+            <IconButton
+              className={"icon" + (lightTheme ? "" : " dark")}
+              onClick={() => {
+                handleDeleteChat(chat_id,userData);
+              }}
+            >
               <DeleteIcon />
             </IconButton>
           </div>
@@ -165,7 +236,7 @@ function ChatArea() {
           <div ref={messagesEndRef} className="BOTTOM" />
 <div className={"text-input-area" + (lightTheme ? "" : " dark")}>
   <input
-    placeholder="Type a Message"
+    placeholder="Type aMessage"
     className={"search-box" + (lightTheme ? "" : " dark")}
     value={messageContent}
     onChange={(e) => {
@@ -175,12 +246,28 @@ function ChatArea() {
       if (event.code === "Enter") {
         // Automatically send message when Enter key is pressed
         sendMessage();
-        setMessageContent('');
+        setMessageContent(" ");
         setRefresh(!refresh);
       }
     }}
   />
    <Emoji onEmojiSelect={handleEmojiSelect} />
+   <input
+          type="file"
+          accept="image/*,video/*,audio/*"
+          onChange={handleFileInputChange}
+          style={{ display: "none" }}
+          id="file-input"
+          
+        />
+        <label htmlFor="file-input">
+          <IconButton
+            className={"icon" + (lightTheme ? "" : " dark")}
+            onClick={sendFileMessage}
+          >
+            <AttachFileIcon/>
+          </IconButton>
+        </label>
 
   <IconButton
     className={"icon" + (lightTheme ? "" : " dark")}
@@ -196,8 +283,7 @@ function ChatArea() {
         </div>
       );
     }
-  }
-  
-  export default ChatArea;
 
- 
+  }
+
+  export default ChatArea;
