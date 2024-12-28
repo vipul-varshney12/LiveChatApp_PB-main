@@ -403,3 +403,7 @@ input:focus {
   font-size: 40px;
   animation: headingMotion 4s infinite;
 }
+.delete-chat-btn{
+  height:10px;
+  width: 20px;;
+}

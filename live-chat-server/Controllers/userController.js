@@ -75,12 +75,16 @@ const fetchAllUsersController = expressAsyncHandler(async (req, res) => {
         ],
       }
     : {};
-
+//i=insensivity
+// $or=operator is used to specify multiple conditions for the logical OR operation
+// performs a case-insensitive regular expression search on the name field
+// using the value provided in req.query.search.
   const users = await UserModel.find(keyword).find({
     _id: { $ne: req.user._id },
   });
   res.send(users);
 });
+//$ne= not  equal condidtions
 
 
 module.exports = {

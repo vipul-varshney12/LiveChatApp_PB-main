@@ -101,6 +101,8 @@ useEffect(() => {
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
    const[socketConnectionsStatus,setSocketConnoectionsStatus]=useState([]);
+
+   
   const sendMessage = () => {
     var data=null;
     // console.log("SendMessage Fired to", chat_id._id);

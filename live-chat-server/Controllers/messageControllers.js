@@ -79,4 +79,32 @@ const deleteChat = expressAsyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
-module.exports = { allMessages, sendMessage ,deleteChat};
+
+const deleteSingleChat = expressAsyncHandler(async (req, res) => {
+  const chatId = req.params.chatId;
+
+  if (!chatId) {
+    console.log("Invalid chatId passed into request");
+    return res.sendStatus(400);
+  }
+
+  try {
+    // Find the chat and delete it
+    const chat = await Chat.findByIdAndRemove(chatId);
+
+    if (!chat) {
+      console.log("Chat not found");
+      return res.status(404).send({ message: "Chat not found" });
+    }
+
+    // Delete all messages associated with the chat
+    await Message.deleteMany({ chat: chatId });
+
+    res.json({ message: "Single chat deleted successfully" });
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
+module.exports = { allMessages, sendMessage ,deleteChat,deleteSingleChat};

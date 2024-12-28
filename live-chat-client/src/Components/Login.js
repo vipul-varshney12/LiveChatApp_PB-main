@@ -19,6 +19,7 @@ function Login() {
   const changeHandler = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
+  //...data  is  spread  function it  can create  the  object  of previous  exist  data
 
   const loginHandler = async (e) => {
     setLoading(true);

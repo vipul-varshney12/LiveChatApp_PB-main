@@ -115,7 +115,7 @@ const groupExit = asyncHandler(async (req, res) => {
   const removed = await Chat.findByIdAndUpdate(
     chatId,
     {
-      $pull: { users: userId },
+      $pull: { users: userId },//remove  the particulat  id
     },
     {
       new: true,
@@ -164,3 +164,9 @@ module.exports = {
   addSelfToGroup,
  
 };
+/*
+populate=>>
+Overall, the primary use of populate is 
+to facilitate the retrieval and association of 
+related data from other collections in Mongoose,
+*/
